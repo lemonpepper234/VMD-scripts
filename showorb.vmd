@@ -65,12 +65,15 @@ file delete {*}[glob ${folder_path}orb*.cub]
 }
 
 #the function to render the orbitals
-proc orbrender {folder_path start_orb_index end_orb_index isoval scaling_factor} {
+proc orbrender {folder_path start_orb_index end_orb_index isoval scaling_factor thetax thetay thetaz} {
     for {set iorb $start_orb_index} {$iorb <= $end_orb_index} {incr iorb} {
         set renderer TachyonInternal
         display resize 2540 2540
 
         orb $folder_path $iorb
+        rotate x by $thetax
+        rotate y by $thetay
+        rotate z by $thetaz
         orbiso $isoval
         scale by $scaling_factor
 
