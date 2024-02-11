@@ -2,6 +2,45 @@
 #Written by Tian Lu (sobereva@sina.com), 2018-Oct-17
 #set folder_path ".\\test\\au8pt5ground\\"
 
+proc mycolor_scale {} {
+  set color_start [colorinfo num]
+  display update off
+
+  set colors(0) [list 1.0 1.0 1.0]  
+  set colors(256) [list 0.0 0.0 1.0]  
+  set colors(512) [list 1.0 0.0 0.0]  
+  set colors(768) [list 0.0 1.0 0.0]  
+    
+  
+
+  for {set i 0} {$i < 1024} {incr i} {
+    if {$i < 256} {
+      set ratio [expr double($i) / 256.0]
+      set r [expr (1.0 - $ratio) * [lindex $colors(0) 0] + $ratio * [lindex $colors(256) 0]]
+      set g [expr (1.0 - $ratio) * [lindex $colors(0) 1] + $ratio * [lindex $colors(256) 1]]
+      set b [expr (1.0 - $ratio) * [lindex $colors(0) 2] + $ratio * [lindex $colors(256) 2]]
+    } elseif {$i < 512} {
+      set ratio [expr double($i - 256) / 256.0]
+      set r [expr (1.0 - $ratio) * [lindex $colors(256) 0] + $ratio * [lindex $colors(512) 0]]
+      set g [expr (1.0 - $ratio) * [lindex $colors(256) 1] + $ratio * [lindex $colors(512) 1]]
+      set b [expr (1.0 - $ratio) * [lindex $colors(256) 2] + $ratio * [lindex $colors(512) 2]]
+    } elseif {$i < 768} {
+      set ratio [expr double($i - 512) / 256.0]
+      set r [expr (1.0 - $ratio) * [lindex $colors(512) 0] + $ratio * [lindex $colors(768) 0]]
+      set g [expr (1.0 - $ratio) * [lindex $colors(512) 1] + $ratio * [lindex $colors(768) 1]]
+      set b [expr (1.0 - $ratio) * [lindex $colors(512) 2] + $ratio * [lindex $colors(768) 2]]
+    } else {
+      set ratio [expr double($i - 768) / 255.0]
+      set r [expr (1.0 - $ratio) * [lindex $colors(768) 0] + $ratio * [lindex $colors(0) 0]]
+      set g [expr (1.0 - $ratio) * [lindex $colors(768) 1] + $ratio * [lindex $colors(0) 1]]
+      set b [expr (1.0 - $ratio) * [lindex $colors(768) 2] + $ratio * [lindex $colors(0) 2]]
+    }
+
+  color change rgb [expr $i + $color_start     ] $r $g $b
+  }
+  display update on
+}
+
 proc showorb {} {
 color change rgb tan 0.700000 0.560000 0.360000
 material change mirror Opaque 0.15
@@ -53,6 +92,108 @@ showorb
 
 }
 
+proc sorb {folder_path iorb} {
+#Set the isovalue for showing orbitals here. 0.02~0.06 is commonly used.
+set isoval 0.01
+#Set the material for showing orbitals here. Glossy and EdgyGlass are recommended.
+set mater Glossy
+light 3 on
+
+color Display Background white
+display depthcue off
+display rendermode GLSL
+axes location Off
+if {[molinfo num]>0} {
+set viewpoint [molinfo top get {center_matrix rotate_matrix scale_matrix}]
+}
+mol delete top
+mol new ${folder_path}sorb[format %06d $iorb].cub
+mol modstyle 0 top CPK 0.800000 0.300000 22.000000 22.000000
+mol addrep top
+mol modstyle 1 top Isosurface $isoval 0 0 0 1 1
+mol modcolor 1 top ColorID 1
+mol modmaterial 1 top $mater
+mol addrep top
+mol modstyle 2 top Isosurface -$isoval 0 0 0 1 1
+mol modcolor 2 top ColorID 0
+mol modmaterial 2 top $mater
+if [info exists viewpoint] {
+molinfo top set {center_matrix rotate_matrix scale_matrix} $viewpoint
+}
+
+showorb
+
+}
+
+proc asorb {folder_path iorb} {
+#Set the isovalue for showing orbitals here. 0.02~0.06 is commonly used.
+set isoval 0.01
+#Set the material for showing orbitals here. Glossy and EdgyGlass are recommended.
+set mater Glossy
+light 3 on
+
+color Display Background white
+display depthcue off
+display rendermode GLSL
+axes location Off
+if {[molinfo num]>0} {
+set viewpoint [molinfo top get {center_matrix rotate_matrix scale_matrix}]
+}
+mol delete top
+mol new ${folder_path}asorb[format %06d $iorb].cub
+mol modstyle 0 top CPK 0.800000 0.300000 22.000000 22.000000
+mol addrep top
+mol modstyle 1 top Isosurface $isoval 0 0 0 1 1
+mol modcolor 1 top ColorID 1
+mol modmaterial 1 top $mater
+mol addrep top
+mol modstyle 2 top Isosurface -$isoval 0 0 0 1 1
+mol modcolor 2 top ColorID 0
+mol modmaterial 2 top $mater
+if [info exists viewpoint] {
+molinfo top set {center_matrix rotate_matrix scale_matrix} $viewpoint
+}
+
+showorb
+
+}
+
+
+proc bsorb {folder_path iorb} {
+#Set the isovalue for showing orbitals here. 0.02~0.06 is commonly used.
+set isoval 0.01
+#Set the material for showing orbitals here. Glossy and EdgyGlass are recommended.
+set mater Glossy
+light 3 on
+
+color Display Background white
+display depthcue off
+display rendermode GLSL
+axes location Off
+if {[molinfo num]>0} {
+set viewpoint [molinfo top get {center_matrix rotate_matrix scale_matrix}]
+}
+mol delete top
+mol new ${folder_path}bsorb[format %06d $iorb].cub
+mol modstyle 0 top CPK 0.800000 0.300000 22.000000 22.000000
+mol addrep top
+mol modstyle 1 top Isosurface $isoval 0 0 0 1 1
+mol modcolor 1 top ColorID 1
+mol modmaterial 1 top $mater
+mol addrep top
+mol modstyle 2 top Isosurface -$isoval 0 0 0 1 1
+mol modcolor 2 top ColorID 0
+mol modmaterial 2 top $mater
+if [info exists viewpoint] {
+molinfo top set {center_matrix rotate_matrix scale_matrix} $viewpoint
+}
+
+showorb
+
+}
+
+
+
 #the variable folder_path should be claimed in the proc
 proc orbiso {isoval} {
 mol modstyle 1 top Isosurface $isoval 0 0 0 1 1
@@ -83,4 +224,106 @@ proc orbrender {folder_path start_orb_index end_orb_index isoval scaling_factor 
 
         mol delete top  
     }
+}
+
+proc atheta {folder_path iorb iso} {
+
+
+color scale method BWR
+color Display Background white
+axes location Off
+display depthcue off
+display rendermode GLSL
+light 2 on
+light 3 on
+material change transmode EdgyGlass 1.0
+material change specular EdgyGlass 0.15
+material change shininess EdgyGlass 0.95
+material change opacity EdgyGlass 0.7
+material change outlinewidth EdgyGlass 0.9
+material change outline EdgyGlass 0.5
+
+set colorlow -3.14
+set colorhigh 3.14
+
+mol delete top
+mol new ${folder_path}asorb[format %06d $iorb].cub
+mol addfile ${folder_path}iasorb[format %06d $iorb].cub
+mol modstyle 0 top CPK 1.000000 0.300000 22.000000 22.000000
+mol addrep top
+mol modstyle 1 top Isosurface $iso 0 0 0 1 1
+mol modmaterial 1 top EdgyGlass
+mol modcolor 1 top Volume 1
+
+mycolor_scale
+mol scaleminmax top 1 $colorlow $colorhigh
+
+}
+
+proc btheta {folder_path iorb iso} {
+
+
+color scale method BWR
+color Display Background white
+axes location Off
+display depthcue off
+display rendermode GLSL
+light 2 on
+light 3 on
+material change transmode EdgyGlass 1.0
+material change specular EdgyGlass 0.15
+material change shininess EdgyGlass 0.95
+material change opacity EdgyGlass 0.7
+material change outlinewidth EdgyGlass 0.9
+material change outline EdgyGlass 0.5
+
+set colorlow -3.14
+set colorhigh 3.14
+
+mol delete top
+mol new ${folder_path}bsorb[format %06d $iorb].cub
+mol addfile ${folder_path}ibsorb[format %06d $iorb].cub
+mol modstyle 0 top CPK 1.000000 0.300000 22.000000 22.000000
+mol addrep top
+mol modstyle 1 top Isosurface $iso 0 0 0 1 1
+mol modmaterial 1 top EdgyGlass
+mol modcolor 1 top Volume 1
+
+mycolor_scale
+mol scaleminmax top 1 $colorlow $colorhigh
+
+}
+
+proc theta {folder_path iorb iso} {
+
+
+color scale method BWR
+color Display Background white
+axes location Off
+display depthcue off
+display rendermode GLSL
+light 2 on
+light 3 on
+material change transmode EdgyGlass 1.0
+material change specular EdgyGlass 0.15
+material change shininess EdgyGlass 0.95
+material change opacity EdgyGlass 0.7
+material change outlinewidth EdgyGlass 0.9
+material change outline EdgyGlass 0.5
+
+set colorlow -3.14
+set colorhigh 3.14
+
+mol delete top
+mol new ${folder_path}sorb[format %06d $iorb].cub
+mol addfile ${folder_path}isorb[format %06d $iorb].cub
+mol modstyle 0 top CPK 1.000000 0.300000 22.000000 22.000000
+mol addrep top
+mol modstyle 1 top Isosurface $iso 0 0 0 1 1
+mol modmaterial 1 top EdgyGlass
+mol modcolor 1 top Volume 1
+
+mycolor_scale
+mol scaleminmax top 1 $colorlow $colorhigh
+
 }
